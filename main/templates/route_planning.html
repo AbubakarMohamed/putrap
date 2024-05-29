@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Route Planner</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Plan Your Route</h1>
+        <form id="route-form">
+            <div class="form-group">
+                <label for="origin">Origin:</label>
+                <input type="text" class="form-control" id="origin" name="origin">
+            </div>
+            <div class="form-group">
+                <label for="destination">Destination:</label>
+                <input type="text" class="form-control" id="destination" name="destination">
+            </div>
+            <button type="submit" class="btn btn-primary">Get Route</button>
+        </form>
+        <div id="route-result" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#route-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: '{% url "plan_route" %}',
+                    type: 'POST',
+                    data: {
+                        'origin': $('#origin').val(),
+                        'destination': $('#destination').val(),
+                    },
+                    success: function(data) {
+                        $('#route-result').html(`<h3>Route:</h3> <p>${data.path.join(' -> ')}</p> <h3>Cost:</h3> <p>${data.cost}</p>`);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#route-result').html(`<p style="color: red;">${xhr.responseJSON.error}</p>`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
